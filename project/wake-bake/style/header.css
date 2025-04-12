@@ -1,0 +1,247 @@
+/*/////////////////header-top///////////////////*/
+
+.header{
+    background: url("../img/decor/header-bacground.png") 50% 100% / cover no-repeat;
+}
+.header__top{
+    padding-top: 19px;
+}
+.header__top-inner{
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+.header__logo{
+    max-width: 174px;
+    z-index: 11;
+}
+.header__logo img{
+    width: 100%;
+}
+.nav{
+    transition: var(--transition);
+}
+.nav__link{
+    display: block;
+    padding: 5px 0;
+    position: relative;
+    z-index: 1;
+}
+.nav__list{
+    display: flex;
+    gap: 4vh 40px;
+}
+.nav__link::before{
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: -8px;
+    left: -12px;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--bordeer-full);
+    background-color: var(--accent-color);
+
+    transition: all .3s;
+    opacity: 0;
+}
+.nav__link:hover::before{
+    opacity: 1;
+}
+
+/*//////////////////header-top__burger/////////////////////*/
+
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+/* Стилизация иконки бургера */
+.burger-icon {
+    display: none;
+    z-index: 11;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+}
+
+.burger-icon span {
+    position: relative;
+}
+
+/* Линейки бургера */
+.burger-icon span,
+.burger-icon span::before,
+.burger-icon span::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 3px;
+    background-color: var(--text-color);
+    border-radius: 4px; /* Для сглаживания углов */
+    transition: all 0.35s cubic-bezier(0.645, 0.045, 0.355, 1); /* Плавная анимация */
+}
+
+.burger-icon span::before {
+    top: 8px;
+}
+
+.burger-icon span::after {
+    bottom: 8px;
+}
+
+/* Анимация трансформации линий бургера при открытии */
+.body--opened-menu .burger-icon span {
+    background: transparent;
+}
+
+.body--opened-menu .burger-icon span::before {
+    top: 0;
+    transform: rotate(45deg);
+    transition: var(--transition);
+}
+
+.body--opened-menu .burger-icon span::after {
+    bottom: 0;
+    transform: rotate(-45deg);
+    transition: var(--transition);
+}
+
+/* Меню навигации */
+.navigation-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    max-width: 80%;
+    height: 100vh;
+    background-color: white;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Более плавная анимация */
+    overflow-y: auto;
+    text-align: center;
+    padding-top: 50px;
+    z-index: 9;
+}
+
+.navigation-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navigation-menu li {
+    margin-bottom: 10px;
+}
+
+.navigation-menu a {
+    color: black;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+/* Открытие меню */
+.body--opened-menu .navigation-menu {
+    transform: translateX(0);
+}
+
+/* Фиксирование прокрутки при открытом меню */
+.body--opened-menu {
+    overflow: hidden;
+}
+/*//////////////////hero///////////////////////////////// */
+
+.header__hero{
+    padding: 50px 0 140px;
+}
+.hero__inner{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/*/////////////////header-hero__content//////////////////*/
+
+.hero__content {
+    max-width: 520px;
+    width: 100%;
+}
+.header__hero-start {
+    color: #b197b2;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    line-height: 1.6;
+}
+.header__hero-circule{
+    vertical-align: middle;
+    padding: 0 10px;
+}
+.hero__title {
+    padding-bottom: 30px;
+}
+.hero__text {
+    padding-bottom: 40px;
+    max-width: 360px;
+    width: 100%;
+}
+.hero__img-contol--mobile{
+    display: none;
+}
+.hero__button{
+    max-width: 360px;
+    width: 100%;
+}
+
+/*/////////////////header-hero__img//////////////////*/
+
+.hero__img {
+    max-width: 377px;
+    margin-right: 247px;
+    position: relative;
+}
+.hero__img>img{
+    width: 100%;
+}
+.hero__img-contol {
+    max-width: 200px;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    gap: 10px;
+    left: calc(100% - 39px);
+    bottom: 10.7%;
+}
+.hero__img-button{
+    display: flex;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+    padding-left: 2.7%;
+    border-radius: var(--bordeer-full);
+    background-color: var(--bacground-color);
+    box-shadow: 0 4px 20px 0 rgba(184, 148, 126, 0.3);
+    width: 78px;
+    height: 78px;
+    position: relative;
+}
+.hero__img-button::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--bordeer-full);
+    border: 1px solid var(--accent-color);
+    inset: 5px;
+
+    transition: all .3s;
+    opacity: 0;
+}
+.hero__img-button:hover::before{
+    opacity: 1;
+}
