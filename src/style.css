@@ -289,4 +289,7 @@ li a {
     .sidebar__user {
         margin-left: 0;
     }
+    .content__title {
+        font-size: 35px;
+    }
 }
