@@ -1,0 +1,32 @@
+.footer {
+    padding: 108px 146px 109px;
+    background: #F9F9F9;
+    color: var(--accent-color);
+}
+.footer__inner {
+    display: flex;
+    justify-content: flex-end;
+    line-height: 125%;
+}
+.footer__content {
+    display: grid;
+    max-width: 709px;
+    width: 100%;
+    grid-template-columns: repeat(3,1fr);
+    gap: 101px;
+}
+
+.footer__list {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+.footer__list-item {
+    font-size: 18px;
+}
+.footer__list-item--First {
+    font-weight: 800;
+    font-size: 21px;
+    line-height: 125%;
+    margin-bottom: 26px;
+}
