@@ -1,0 +1,143 @@
+/* //////header__top//////// */
+
+.header__top {
+    padding: 29px 0;
+}
+.header__nav{
+    transition: var(--transition);
+}
+
+.header__nav-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 41px;
+}
+
+.header__search-container {
+    position: absolute;
+    top: 20px;
+    right: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 10px;
+}
+
+.header__search-input {
+    width: 200px;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 16px;
+    border: none;
+    background-color: transparent;
+    color: #000;
+    transition: all 0.3s ease;
+}
+
+.header__search-input::placeholder {
+    color: #000;
+    font-weight: bold;
+}
+
+.header__search-input:focus {
+    border-radius: 20px;
+    background-color: #fff;
+}
+
+.header__search-icon {
+    background: transparent;
+}
+
+
+/* ////////////hero//////////*/
+
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: url("../img/content/header-bg.jpg") 50% 100% / cover no-repeat;
+    background-position: center;
+    margin-bottom: 84px;
+}
+.hero__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.hero__content img{
+    width: 100%;
+    max-width: 733px;
+}
+.hero__content a{
+    position: absolute;
+    bottom: 9%;
+    right: 10%;
+}
+
+.hero__button {
+    display: inline-block;
+    border: 1.56px solid #fff;
+    padding: 6px 24px;
+    font-size: 20px;
+    color: #fff;
+    text-decoration: none;
+    line-height: 256%;
+    letter-spacing: 0.08em;
+}
+
+
+
+/* Стилизация иконки бургера */
+.burger-icon {
+    display: none;
+    z-index: 11;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+}
+
+.burger-icon span {
+    position: relative;
+}
+
+/* Линейки бургера */
+.burger-icon span,
+.burger-icon span::before,
+.burger-icon span::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 3px;
+    background-color: black;
+    border-radius: 4px; /* Для сглаживания углов */
+    transition: all 0.35s cubic-bezier(0.645, 0.045, 0.355, 1); /* Плавная анимация */
+}
+
+.burger-icon span::before {
+    top: 8px;
+}
+
+.burger-icon span::after {
+    bottom: 8px;
+}
+
+/* Анимация трансформации линий бургера при открытии */
+.body--opened-menu .burger-icon span {
+    background: transparent;
+}
+
+.body--opened-menu .burger-icon span::before {
+    top: 0;
+    transform: rotate(45deg);
+    transition: var(--transition);
+}
+
+.body--opened-menu .burger-icon span::after {
+    bottom: 0;
+    transform: rotate(-45deg);
+    transition: var(--transition);
+}
