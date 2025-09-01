@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Мой путь в IT — Pixel Talk (One-Scene)</title>
+  <style>
+    :root{
+      --bg:#0e0f14;--ink:#e6f2ff;--accent:#59f;--accent2:#f5a623;--panel:#151826;--grid:#1b2033;--bubble:#0b0d16;--pixel:#0d1222;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font:16px/1.45 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      color:var(--ink);
+      background:
+        linear-gradient(transparent 31px, var(--grid) 32px),
+        linear-gradient(90deg, transparent 31px, var(--grid) 32px),
+        radial-gradient(1200px 800px at 70% -10%, rgba(64,128,255,.2), transparent 60%),
+        radial-gradient(900px 600px at -10% 120%, rgba(255,160,0,.12), transparent 60%),
+        var(--bg);
+      background-size:32px 32px,32px 32px,100% 100%,100% 100%,100% 100%;
+      display:flex;align-items:center;justify-content:center;overflow:hidden;
+    }
+    .app{width:min(980px,100vw);padding:16px}
+    .title{margin:0 0 12px 0;letter-spacing:1px;font-weight:800;text-align:center;text-shadow:0 0 12px rgba(85,140,255,.35)}
+    .panel{
+      position:relative;
+      background:linear-gradient(180deg, rgba(21,24,38,.9), rgba(14,15,20,.92));
+      border-radius:14px;padding:14px 14px 64px;
+      box-shadow:0 16px 40px rgba(0,0,0,.6), 0 0 0 2px #1f2640 inset;outline:4px solid var(--pixel)
+    }
+    .panel:before{content:"";position:absolute;inset:0;border-radius:10px;pointer-events:none;box-shadow:0 0 0 6px #0a0d18 inset,0 0 0 10px #192042 inset,0 0 0 14px #0a0d18 inset}
+    .stage-wrap{display:flex;justify-content:center}
+    #stage{
+      width:min(920px,95vw);
+      height:calc(min(920px,95vw)*9/16);
+      image-rendering:pixelated;image-rendering:crisp-edges;
+      border-radius:8px;background:#0a0c14;box-shadow:0 0 0 2px #2a325c
+    }
+    .bubble{
+      position:absolute;left:18px;right:18px;bottom:18px;
+      padding:12px 14px;background:var(--bubble);color:var(--ink);
+      border-radius:10px;min-height:52px;
+      box-shadow:0 0 0 2px #2b2f47 inset, 0 8px 18px rgba(0,0,0,.45);
+      transform:translateY(8px);opacity:0;transition:.35s ease;font-size:14px;letter-spacing:.2px
+    }
+    .bubble.show{transform:translateY(0);opacity:1}
+    .bubble .who{font-weight:800;color:#a5baff}
+    .hud{
+      position:absolute;top:10px;left:12px;display:flex;gap:8px;align-items:center;
+      background:#0b1022cc;border-radius:8px;padding:6px 8px;box-shadow:0 0 0 2px #2b335c inset
+    }
+    .chip{font-size:18px;padding:2px 6px;border-radius:6px;background:#16204b;color:#cfe0ff;border:1px solid #2e3b77}
+    .lvl{
+      position:absolute;font-size:27px;top:10px;right:12px;background:#11204ecc;color:#aee1ff;
+      border:1px solid #2e4e9b;border-radius:8px;padding:6px 10px;font-weight:800;
+      box-shadow:0 0 0 2px #2b335c inset
+    }
+
+    /* ПИКСЕЛЬНАЯ КОРОНА + надпись уровня */
+    .levelOver{
+      position:absolute;
+      left:50%;
+      top:64px;
+      transform:translate(-50%, -100%);
+      font-weight:800;
+      font-size:20px;
+      color:#ffd54a;
+      text-shadow:0 0 3px #ff0, 0 0 6px #f80;
+      pointer-events:none;
+      white-space:nowrap;
+      z-index:5;
+    }
+    .levelOver::before{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:-26px;
+      transform:translateX(-50%);
+      width:40px; height:22px;
+      background:
+        linear-gradient(#d9aa00 0 0) 0 16px/40px 6px no-repeat,
+        linear-gradient(#ffe680 0 0) 0 16px/40px 2px no-repeat,
+        linear-gradient(#ffd54a 0 0)  2px  8px/ 6px 10px no-repeat,
+        linear-gradient(#ffd54a 0 0) 10px  4px/ 6px 14px no-repeat,
+        linear-gradient(#ffd54a 0 0) 18px  0   / 6px 18px no-repeat,
+        linear-gradient(#ffd54a 0 0) 26px  4px/ 6px 14px no-repeat,
+        linear-gradient(#ffd54a 0 0) 34px  8px/ 6px 10px no-repeat,
+        linear-gradient(#ff3b3b 0 0) 18px 18px/ 6px 6px no-repeat,
+        linear-gradient(#59f     0 0)  6px 18px/ 4px 4px no-repeat,
+        linear-gradient(#6dfc99  0 0) 30px 18px/ 4px 4px no-repeat;
+      image-rendering:pixelated;
+      filter: drop-shadow(0 0 2px #ffe56a) drop-shadow(0 0 6px #ff9900);
+    }
+    .levelOver.glow{ animation:crownGlow .6s ease, crownPop .6s ease; }
+    @keyframes crownGlow{
+      0% { text-shadow:0 0 2px #ff0, 0 0 4px #f80; filter:drop-shadow(0 0 2px #ffe56a) drop-shadow(0 0 6px #ff9900); }
+      50%{ text-shadow:0 0 6px #fff200, 0 0 12px #ff8000; filter:drop-shadow(0 0 4px #fff200) drop-shadow(0 0 10px #ff8000); }
+      100%{text-shadow:0 0 2px #ff0, 0 0 4px #f80; filter:drop-shadow(0 0 2px #ffe56a) drop-shadow(0 0 6px #ff9900); }
+    }
+    @keyframes crownPop{ 0%{transform:translate(-50%,-110%)} 50%{transform:translate(-50%,-125%)} 100%{transform:translate(-50%,-100%)} }
+
+    /* Кнопка под текстом в финальной главе */
+    .bubble-cta{
+      margin-top:10px; display:none; text-align:center;
+    }
+    .bubble-cta .btn-link{
+      display:inline-block; padding:8px 12px; border-radius:10px;
+      background:linear-gradient(180deg,#7fb0ff,#4976ff);
+      color:#081022; font-weight:800; text-decoration:none;
+      box-shadow:0 6px 0 #2c48a1, 0 10px 16px rgba(0,0,0,.35);
+    }
+
+    .controls{display:flex;gap:10px;justify-content:center;margin-top:12px}
+    .btn{
+      cursor:pointer;border:none;border-radius:10px;padding:10px 14px;color:#081022;font-weight:800;
+      background:linear-gradient(180deg,#7fb0ff,#4976ff);
+      box-shadow:0 6px 0 #2c48a1, 0 10px 16px rgba(0,0,0,.4);
+      transition:transform .08s ease, box-shadow .08s ease;letter-spacing:.2px
+    }
+    .btn.secondary{background:linear-gradient(180deg,#ffc879,#ff9b2f);box-shadow:0 6px 0 #a25a10, 0 10px 16px rgba(0,0,0,.35)}
+    .btn:active{transform:translateY(2px);box-shadow:0 4px 0 rgba(0,0,0,.6), 0 8px 12px rgba(0,0,0,.35)}
+    .hint{opacity:.7;text-align:center;margin-top:8px;font-size:12px}
+    @media (max-width:640px){.btn{padding:10px 12px}.title{font-size:18px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1 class="title">Мой путь в IT <span style="font-size:12px;background:linear-gradient(90deg,var(--accent),#8af);color:#081022;border-radius:6px;padding:4px 8px;margin-left:8px">Pixel Talk</span></h1>
+    <div class="panel" id="panel">
+      <div class="hud" id="hud"><span class="chip" id="chip-scene">Глава 0</span><span class="chip" id="chip-mood">—</span></div>
+      <div class="lvl" id="lvl">Уровень: 0</div>
+
+      <div class="stage-wrap">
+        <canvas id="stage" width="320" height="180" aria-label="pixel stage"></canvas>
+      </div>
+
+      <!-- Надпись уровня + корона (HTML, чёткая) -->
+      <div id="levelOverHead" class="levelOver">Уровень: 0</div>
+
+      <div class="bubble" id="bubble">
+        <span class="who">Я:</span> <span id="line"></span>
+        <div id="bubble-cta" class="bubble-cta">
+          <a class="btn-link" href="./story.html" target="_blank" rel="noopener">посмотреть полную историю</a>
+        </div>
+      </div>
+    </div>
+    <div class="controls"><button class="btn secondary" id="prev">◀ Назад</button><button class="btn" id="next">Далее ▶</button></div>
+    <div class="hint">Навигация: ◀ ▶ или клик по панели. Всё 2D пиксельно.</div>
+  </div>
+
+  <script>
+  const chapters = [
+  {
+    title: "Глава 1. Детство и первые игры",
+    mood: "ностальгия",
+    text: "С детства я любил технику. Как любой и любой уважающий себя мужчина я рубился в GTA San Andreas, CS 1.6 и, конечно, Minecraft. В него я играю с 8 лет и по сей день (да да фанат). Всё началось с моего первого ноута — старенького Sony, купленного в 2014. Именно с него пошли первые шаги и знакомства с техникой."
+  },
+  {
+    title: "Глава 2. Первый шаг в IT (2022)",
+    mood: "старт",
+    text: "В 8 классе в школу пришёл Ибрагим Мухарбекович — первый айтишник, с которым я мог говорить обо всём. Он вёл проект «Код будущего», где мы учили HTML и CSS. После уроков он даже приносил PlayStation 2, и мы играли в нее всей группой. Проект я забросил через пару месяцев,мне наскучило но базовые знания html&css я усвоил."
+  },
+  {
+    title: "Глава 3. Возврат в код (2023)",
+    mood: "поиск",
+    text: "В 9 классе у меня появился новый ноут ACER. Снова пошёл в «Код будущего», но проект закрылся, а Ибрагим ушёл. Я наткнулся на проект IGS, который вели ингуши (я был очень удивлен этим). Ментор Лида оказалась очень крутой, она реально разбиралась в том что преподает. С её помощью я вспомнил HTML&CSS и даже сделал первый сайт. Но со временем понял, что веб меня не цепляет — захотел попробовать игры."
+  },
+  {
+    title: "Глава 4. Unity и выгорание",
+    mood: "гринд",
+    text: "Взял C# и Unity. Три месяца писал мелкие консольные проги,освоил базу языка c#, потом перешёл к сценам и ассетам. Сделал свою первую 2D игру, но оказалось, что рисовать всё самому — персонажей, предметы, локации — куда тяжелее, чем я думал. В итоге выгорел, понял, что двигаюсь без цели, и снова всё бросил."
+  },
+  {
+    title: "Глава 5. Ростов-на-Дону и договор",
+    mood: "мотивация",
+    text: "Летом 2024 в Ростове я встретился с другом отца — влиятельный бизнесмен при бабках.разговоривали мы около 3х часов подряд. Он сказал: «Ты занимаешься всем по чуть-чуть, без плана,поэтому терпишь неудачи. Давай так: если к 18 годам не выйдешь хотя бы на 1000$ в месяц, значит, ты ничего не стоишь. Но если получится — я помогу тебе с выходом в Ереван, где строят свою “Кремниевую долину”». Его слова меня очень зацепили,я не спал до 3х утра и поставил себе цель : доказать что я чего то стою заработывая как минимум 1000$ каждый месяц к 18 годам."
+  },
+  {
+    title: "Глава 6. Стройка и MacBook",
+    mood: "хардкор",
+    text: "я решил стать ios разработчиком,но для этого мне необходимо было купить MacBook,Чтобы его купить, я пошёл работать на стройку. Раньше я и шурупа не вкручивал, а тут жара 38 градусов, крыша 15 метров и никакой страховки. Работал полтора месяца, зарабатывал по 1500–2000₽ в день. Было тяжко, но я накопил 110к и 5 сентября 2024 купил MacBook Air M1 за 103к. В тот момент я почувствовал, что реально чего-то добился."
+  },
+  {
+    title: "Глава 7. Swift и переосмысление",
+    mood: "размышления",
+    text: "Осенью начал учить Swift. Написал свою первую программу Archimed 3.0 — калькулятор, уравнения, курс валют и разные фишки. Но потом понял: в iOS-разработке деньги приходят не сразу, а мне нужно было зарабатывать быстрее, чтобы успеть выполнить цель до 19 лет."
+  },
+  {
+    title: "Глава 8. Арокен и первые заказы (2025)",
+    mood: "рывок",
+    text: "В декабре 2024 я наткнулся на школу Максима Арокена. Курс стоил 120к, но по скидке 80. Уговорил родителей вложиться,пообещал что все верну. С января 2025 я каждый день учился: школа днём, потом ноут до ночи. Было тяжело, пару раз хотел сдаться, но держало обещание родителям. Летом я вышел на Kwork. Первые недели — тишина, потом взял заказ на Tilda за 7500₽, сделал за ночь. Потом пошли новые заказы, за июль–август заработал ~65к. Даже отказался от заказа на 130к, потому что знал себе цену."
+  },
+  {
+    title: "Финал. New Game+",
+    mood: "финал",
+    text: "Это настоящая история моего пути от школьного кружка \"Код будущего\" до первых денег на бирже, Дальше - больше."
+  }
+];
+
+  const panel = document.getElementById('panel');
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const bubble = document.getElementById('bubble');
+  const lineEl = document.getElementById('line');
+  const bubbleCta = document.getElementById('bubble-cta');
+  const chipScene = document.getElementById('chip-scene');
+  const chipMood = document.getElementById('chip-mood');
+  const lvlEl = document.getElementById('lvl');
+  const levelOver = document.getElementById('levelOverHead');
+
+  const C = {
+    sky:'#0a0f1d', sky2:'#121b33', ground:'#10142a', neon:'#5aa0ff', star:'#1a2b5c',
+    eye:'#28ff5f', hair:'#4a2e1a', skin:'#e8ecf7', shirt:'#2b58ff', outline:'#0a0c14',
+    pants:'#1a2a4a', shadow:'rgba(0,0,0,.35)', mac:'#8bd6ff', money:'#6dfc99'
+  };
+
+  const stars = Array.from({length:120}, () => ({ x: Math.random()*W, y: Math.random()*H, s: Math.random()*1.5+0.3, a: Math.random()*0.6+0.2 }));
+  const hero = { x: (W/2)|0, y: 122, frame:0 };
+  let sparks = [];
+  function spawnSparks(n=28){ for(let i=0;i<n;i++){ sparks.push({x:hero.x, y:70, vx:(Math.random()*2-1)*30, vy:(Math.random()*-1-0.5)*40, life:1}); } }
+
+  function mixColor(h1,h2,t){ const a=[1,3,5].map(i=>parseInt(h1.slice(i,i+2),16)); const b=[1,3,5].map(i=>parseInt(h2.slice(i,i+2),16)); const c=a.map((v,i)=>(v*(1-t)+b[i]*t)|0); return `#${c.map(v=>v.toString(16).padStart(2,'0')).join('')}`; }
+
+  function drawBG(t){
+    ctx.imageSmoothingEnabled = false;
+    const g=ctx.createLinearGradient(0,0,0,H); const k=(Math.sin(t*0.0003)+1)/2;
+    g.addColorStop(0,mixColor(C.sky,C.sky2,k)); g.addColorStop(1,'#070a14');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    for(const st of stars){ ctx.globalAlpha=st.a; ctx.fillStyle=C.star; ctx.fillRect(st.x,st.y,st.s,st.s); }
+    ctx.globalAlpha=1; ctx.fillStyle=C.ground; ctx.fillRect(0,150,W,30); ctx.fillStyle=C.neon; ctx.fillRect(0,149,W,1);
+  }
+
+  /* ——— НОВЫЙ ПИКСЕЛЬНЫЙ ГЕРОЙ ——— */
+  function drawHero(t){
+    const bob  = Math.sin(t*0.006)*1.0;
+
+    ctx.fillStyle=C.shadow; ctx.fillRect(hero.x-10,134,20,5);         // тень
+    ctx.fillStyle=C.pants;  ctx.fillRect(hero.x-7,118+bob,5,13);      // ноги
+                              ctx.fillRect(hero.x+2,118-bob,5,13);
+    ctx.fillStyle=C.outline; ctx.fillRect(hero.x-7,130,5,2);          // обувь
+                              ctx.fillRect(hero.x+2,130,5,2);
+    ctx.fillStyle=C.shirt;   ctx.fillRect(hero.x-9,98,18,20);         // торс
+    ctx.fillStyle=C.shirt;   ctx.fillRect(hero.x-12,100,3,6);         // плечи
+                              ctx.fillRect(hero.x+9,100,3,6);
+    ctx.fillStyle=C.skin;    ctx.fillRect(hero.x-14,105,3,10);        // руки
+                              ctx.fillRect(hero.x-14,114,6,3);
+                              ctx.fillRect(hero.x+11,105,3,10);
+                              ctx.fillRect(hero.x+8,114,6,3);
+    ctx.fillStyle=C.skin;    ctx.fillRect(hero.x-3,96,6,4);           // шея
+    ctx.fillStyle=C.hair;    ctx.fillRect(hero.x-9,85,18,7);          // волосы
+    ctx.fillStyle=C.skin;    ctx.fillRect(hero.x-9,92,18,10);         // лицо
+    ctx.fillStyle=C.eye;     ctx.fillRect(hero.x-3,95,3,2);           // глаза
+                              ctx.fillRect(hero.x+2,95,3,2);
+    ctx.fillStyle=C.outline; ctx.fillRect(hero.x-9,92,1,10);          // обводки
+                              ctx.fillRect(hero.x+8,92,1,10);
+                              ctx.fillRect(hero.x-9,101,18,1);
+    ctx.globalAlpha=.25;     ctx.fillRect(hero.x-9,89,18,1); ctx.globalAlpha=1;
+  }
+
+  /* ====== ПИКСЕЛЬ-СПРАЙТЫ v2 (более точные) ====== */
+  function drawItemForChapter(i){
+    const Lx = 70,  Ly = 122;
+    const Rx = 250, Ry = 122;
+
+    switch (i) {
+      case 0: drawPS2(Lx, Ly); drawGamepad(Rx, Ry + 4); break;
+      case 1: drawHtmlCss(Lx, Ly); break;
+      case 2: drawLaptop(Lx, Ly); break;
+      case 3: drawUnity(Rx, Ry); break;
+      case 4: drawHelmet(Lx, Ly - 4); drawMoney(Rx, Ry + 6); break;
+      case 5: drawMac(Lx, Ly); drawSwift(Rx, Ry); break;
+      case 6: drawHtmlCss(Lx, Ly); break;
+      case 7: drawTilda(Lx, Ly); drawMoney(Rx, Ry + 6); break;
+      case 8: /* финал — предметов нет, пустая сцена */ break;
+      default: break;
+    }
+  }
+
+  /* mini helper */
+  function px(x,y,w,h,c){ ctx.fillStyle=c; ctx.fillRect(x,y,w,h); }
+
+  function drawPS2(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-8,-14,16,28,'#151a30');
+    px(-6,-12,2,24,'#2f5cff'); px(-3,-12,2,24,'#2f5cff'); px(0,-12,2,24,'#2f5cff');
+    px(5,-10,3,3,'#1fd35b'); px(5,-5,3,3,'#59f');
+    px(-10,13,20,2,'#0a0c14');
+    ctx.restore();
+  }
+
+  function drawGamepad(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-16,-5,32,10,'#2a2a2a'); px(-20,-2,4,8,'#2a2a2a'); px(16,-2,4,8,'#2a2a2a');
+    px(-10,-1,6,2,'#0d0d0d'); px(-8,-3,2,6,'#0d0d0d');
+    px(-2,0,3,3,'#111'); px(5,0,3,3,'#111');
+    px(10,-3,2,2,'#ff4e4e'); px(12,-1,2,2,'#59f'); px(10,1,2,2,'#6dfc99'); px(8,-1,2,2,'#ffd54a');
+    ctx.restore();
+  }
+
+  function drawHtmlCss(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-12,-14,24,28,'#1b3b8f'); px(-10,-12,20,24,'#2b7cff');
+    px(-6,-1,4,2,'#0a0c14'); px(-8,-3,2,6,'#0a0c14');
+    px(2,-1,4,2,'#0a0c14');  px(6,-3,2,6,'#0a0c14');
+    px(-1,0,2,2,'#0a0c14');
+    ctx.restore();
+  }
+
+  function drawLaptop(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-16,-12,32,14,'#1b2233'); px(-14,-10,28,10,'#8bc8ff');
+    px(-18,2,36,4,'#2a2f3e');
+    for(let k=-14;k<=14;k+=4) px(k,3,2,1,'#3e4a63');
+    px(-2,3,4,1,'#3e4a63');
+    ctx.restore();
+  }
+
+  function drawUnity(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-12,-12,24,24,'#0a0c14');
+    px(-1,-12,2,6,'#fff'); px(-1,6,2,6,'#fff');
+    px(-12,-1,6,2,'#fff'); px(6,-1,6,2,'#fff');
+    px(-6,-6,2,2,'#fff'); px(4,-6,2,2,'#fff'); px(-6,4,2,2,'#fff'); px(4,4,2,2,'#fff');
+    ctx.restore();
+  }
+
+  function drawHelmet(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-11,-7,22,14,'#f5c23a'); px(-11,5,22,2,'#b38300'); px(-7,-3,14,2,'#ffe07a');
+    ctx.restore();
+  }
+
+  function drawMoney(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-12,-7,24,14,'#1a7f4a'); px(-10,-5,20,10,'#6dfc99');
+    px(-1,-3,2,6,'#0a0c14'); px(1,-3,3,2,'#0a0c14'); px(1,-1,3,2,'#0a0c14'); px(1,1,2,2,'#0a0c14');
+    ctx.restore();
+  }
+
+  function drawMac(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-16,-12,32,14,'#cfd6df'); px(-2,-6,4,4,'#0a0c14'); px(0,-8,2,2,'#0a0c14');
+    px(-18,2,36,3,'#aeb7c4');
+    ctx.restore();
+  }
+
+  function drawSwift(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-12,-12,24,24,'#ff6a00');
+    px(-4,-2,10,2,'#fff'); px(-6,0,10,2,'#fff'); px(-8,2,10,2,'#fff');
+    px(4,-4,2,2,'#fff');
+    ctx.restore();
+  }
+
+  function drawTilda(x,y){
+    ctx.save(); ctx.translate(x,y);
+    px(-12,-12,24,24,'#111');
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.strokeRect(-10,-10,20,20);
+    px(-3,-4,6,2,'#fff'); px(-1,-2,2,8,'#fff');
+    ctx.restore();
+  }
+
+  /* Мини-звезда = крест из 5 пикселей по 1px (использовались раньше в финале;
+     теперь финал пустой, функция оставлена на будущее) */
+  function drawStar(x,y){
+    ctx.save(); ctx.translate(x,y); ctx.fillStyle = '#ffd54a';
+    ctx.fillRect(0,0,1,1);
+    ctx.fillRect(-1,0,1,1); ctx.fillRect(1,0,1,1);
+    ctx.fillRect(0,-1,1,1); ctx.fillRect(0,1,1,1);
+    ctx.restore();
+  }
+
+  let idx = 0; // текущая глава (и уровень)
+
+  function setHUD(){
+    chipScene.textContent = chapters[idx]?.title || '—';
+    chipMood.textContent  = chapters[idx]?.mood  || '—';
+  }
+  function setLevel(){
+    const label = 'Уровень: '+idx;
+    lvlEl.textContent = label;
+    levelOver.textContent = label;
+    levelOver.classList.add('glow');
+    setTimeout(()=>levelOver.classList.remove('glow'), 600);
+  }
+
+  // позиция HTML-надписи
+  function positionLevelOver(){
+    const panelRect = panel.getBoundingClientRect();
+    const stageRect = canvas.getBoundingClientRect();
+    const scaleX = stageRect.width / W;
+    const scaleY = stageRect.height / H;
+    const px = stageRect.left - panelRect.left + hero.x * scaleX;
+    const py = stageRect.top  - panelRect.top  + 64 * scaleY;
+    levelOver.style.left = px + 'px';
+    levelOver.style.top  = py + 'px';
+  }
+
+  function showCTA(visible){
+    bubbleCta.style.display = visible ? 'block' : 'none';
+  }
+
+  let typingTimer;
+  function setText(s){
+    bubble.classList.remove('show');
+    clearTimeout(typingTimer);
+    lineEl.textContent='';
+    showCTA(false);
+
+    // запускаем печать
+    setTimeout(()=>{
+      bubble.classList.add('show');
+      typeWriter(s, 0, () => {
+        // по завершении печати — если это финальная глава, показать кнопку
+        const isFinal = (idx === chapters.length - 1);
+        showCTA(isFinal);
+      });
+    }, 200);
+  }
+
+  // эффект печатания + onDone callback
+  function typeWriter(text, i=0, onDone=null){
+    if(i <= text.length){
+      lineEl.textContent = text.slice(0,i);
+      typingTimer = setTimeout(()=>typeWriter(text, i+1, onDone), 14);
+    } else {
+      if (typeof onDone === 'function') onDone();
+    }
+  }
+
+  let last=0;
+  function loop(t){
+    const dt=Math.min(1/30,(t-last)/1000||0); last=t;
+    drawBG(t);
+    drawItemForChapter(Math.max(0,idx));
+
+    const isFinal = (idx === chapters.length - 1);
+    if(!isFinal){
+      drawHero(t);
+      levelOver.style.display = 'block';
+    } else {
+      levelOver.style.display = 'none'; // в финале корона/уровень над головой не нужны
+    }
+
+    positionLevelOver();
+
+    // искры
+    for(let i=sparks.length-1;i>=0;i--){
+      const p=sparks[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=60*dt; p.life-=dt;
+      if(p.life<=0){ sparks.splice(i,1); continue;}
+      ctx.globalAlpha=Math.max(0,p.life); ctx.fillStyle='#8af'; ctx.fillRect(p.x,p.y,1,1); ctx.globalAlpha=1;
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  function gotoNext(){
+    if(idx < chapters.length-1){
+      idx++; setLevel(); setHUD(); setText(chapters[idx].text); spawnSparks();
+    }
+  }
+  function gotoPrev(){
+    if(idx > 0){
+      idx--; setLevel(); setHUD(); setText(chapters[idx].text);
+    }
+  }
+
+  document.getElementById('next').addEventListener('click', gotoNext);
+  document.getElementById('prev').addEventListener('click', gotoPrev);
+  document.querySelector('.panel').addEventListener('click', (e)=>{ if(!e.target.closest('.bubble')) gotoNext(); });
+  window.addEventListener('keydown', (e)=>{ if(e.key==='ArrowRight') gotoNext(); if(e.key==='ArrowLeft') gotoPrev(); });
+  window.addEventListener('resize', positionLevelOver);
+
+  // старт
+  setHUD(); setLevel(); setText(chapters[idx].text);
+  positionLevelOver();
+  </script>
+</body>
+</html>
